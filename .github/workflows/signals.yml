@@ -1,12 +1,8 @@
 name: signals
+
 on:
- schedule:
-pandas
-numpy
-scikit-learn
-yfinance
-requests
-joblib    - cron: "*/5 * * * 1-5"
+  schedule:
+    - cron: "*/5 * * * 1-5"
   workflow_dispatch:
     inputs:
       test:
