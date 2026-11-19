@@ -1,1 +1,50 @@
 
+name: signals
+
+on:
+  schedule:
+    - cron: "*/5 * * * 1-5"
+  workflow_dispatch:
+    inputs:
+      test:
+        description: "Enviar solo mensaje de prueba a Telegram"
+        type: boolean
+        default: false
+
+concurrency:
+  group: signals
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Cubo de cache
+        id: bucket
+        run: echo "b=$(date -u +%Y%m%d)-$(( 10#$(date -u +%H) / 6 ))" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        with:
+          path: cache
+          key: bundles-${{ steps.bucket.outputs.b }}
+
+      - name: Mensaje de prueba
+        if: ${{ github.event.inputs.test == 'true' }}
+        run: python signal_bot.py --test
+
+      - name: Buscar senales
+        if: ${{ github.event.inputs.test != 'true' }}
+        run: python signal_bot.py --once
