@@ -1,13 +1,3 @@
-
-"""
-Generador de señales con ML para opciones binarias (solo SEÑALES, no opera).
-Pensado para ejecutarse en la nube (GitHub Actions) y avisar al iPhone por Telegram.
-
-Filosofía: calidad > cantidad. El bot solo emite una señal si, en validación
-walk-forward (datos que el modelo nunca vio), la precisión con ese umbral de
-confianza supera de forma estadísticamente fiable el punto de equilibrio del
-payout. Si no hay ventaja demostrable, NO emite señales.
-"""
 import argparse
 import math
 import os
